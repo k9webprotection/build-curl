@@ -16,6 +16,10 @@ DEFAULT_CURL_DIST="${DEFAULT_CURL_DIST:=${BUILD_DIR}/curl}"
 OBJDIR_ROOT="${OBJDIR_ROOT:=${BUILD_DIR}/target}"
 CONFIGS_DIR="${CONFIGS_DIR:=${BUILD_DIR}/configs}"
 
+# Include files which are platform-specific
+OPENSSL_PLATFORM_HEADERS="include/openssl/opensslconf.h"
+CURL_PLATFORM_HEADERS=""
+
 list_arch() {
     if [ -z "${1}" ]; then
         PFIX="${CONFIGS_DIR}/setup-*"
@@ -72,6 +76,12 @@ do_build_openssl() {
     TARGET="${1}"
     OUTPUT_ROOT="${2}"
     BUILD_ROOT="${OUTPUT_ROOT}/build/openssl"
+
+    [ -n "${PLATFORM_DEFINITION}" ] || {
+        echo "PLATFORM_DEFINITION is not set for ${TARGET}"
+        return 1
+    }
+
     [ -d "${BUILD_ROOT}" -a -f "${BUILD_ROOT}/Configure" ] || {
         echo "Creating build directory for '${TARGET}'..."
         mkdir -p "$(dirname "${BUILD_ROOT}")" || return $?
@@ -95,6 +105,17 @@ do_build_openssl() {
     make build_apps && make install_sw
     ret=$?
     rmdir "${OUTPUT_ROOT}"/{bin,certs,misc,private,lib/engines,lib/pkgconfig} >/dev/null 2>&1
+    
+    # Update platform-specific headers
+    if [ ${ret} -eq 0 ]; then
+        for h in ${OPENSSL_PLATFORM_HEADERS}; do
+            echo "Updating header '${h}' for ${TARGET}..."
+            echo "#if ${PLATFORM_DEFINITION}" > "${OUTPUT_ROOT}/${h}.tmp"
+            cat "${OUTPUT_ROOT}/${h}" >> "${OUTPUT_ROOT}/${h}.tmp"
+            echo "#endif" >> "${OUTPUT_ROOT}/${h}.tmp"
+            mv "${OUTPUT_ROOT}/${h}.tmp" "${OUTPUT_ROOT}/${h}" || return $?
+        done
+    fi
     cd ->/dev/null
     return ${ret}
 }
@@ -103,6 +124,12 @@ do_build_curl() {
     TARGET="${1}"
     OUTPUT_ROOT="${2}"
     BUILD_ROOT="${OUTPUT_ROOT}/build/curl"
+    
+    [ -n "${PLATFORM_DEFINITION}" ] || {
+        echo "PLATFORM_DEFINITION is not set for ${TARGET}"
+        return 1
+    }
+    
     [ -d "${BUILD_ROOT}" -a -f "${BUILD_ROOT}/configure.ac" -a \
                             -f "${BUILD_ROOT}/buildconf" -a \
                             -f "${BUILD_ROOT}/configure" ] || {
@@ -137,6 +164,17 @@ do_build_curl() {
     make && make install-data install-exec
     ret=$?
     rmdir "${OUTPUT_ROOT}"/{bin,certs,misc,private,lib/engines,lib/pkgconfig} >/dev/null 2>&1
+
+    # Update platform-specific headers
+    if [ ${ret} -eq 0 ]; then
+        for h in ${CURL_PLATFORM_HEADERS}; do
+            echo "Updating header '${h}' for ${TARGET}..."
+            echo "#if ${PLATFORM_DEFINITION}" > "${OUTPUT_ROOT}/${h}.tmp"
+            cat "${OUTPUT_ROOT}/${h}" >> "${OUTPUT_ROOT}/${h}.tmp"
+            echo "#endif" >> "${OUTPUT_ROOT}/${h}.tmp"
+            mv "${OUTPUT_ROOT}/${h}.tmp" "${OUTPUT_ROOT}/${h}" || return $?
+        done
+    fi
     cd ->/dev/null
     return ${ret}
 }
@@ -174,15 +212,28 @@ do_build() {
             echo "Building all architectures for platform '${PLATFORM}'..."
         fi
 
-        for a in $(list_arch ${PLATFORM} | sed -e 's/,//g'); do
+        COMBINED_ARCHS="$(list_arch ${PLATFORM} | sed -e 's/,//g')"
+        for a in ${COMBINED_ARCHS}; do
             do_build ${a} || return $?
         done
         
+        # Combine platform-specific headers
+        COMBINED_ROOT="${OBJDIR_ROOT}/objdir-${PLATFORM}"
+        mkdir -p "${COMBINED_ROOT}" || return $?
+        cp -r ${COMBINED_ROOT}.*/include ${COMBINED_ROOT} || return $?
+        for h in ${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}; do
+            echo "Combining header '${h}'..."
+            rm ${COMBINED_ROOT}/${h} || return $?
+            for a in ${COMBINED_ARCHS}; do
+                cat "${OBJDIR_ROOT}/objdir-${a}/${h}" >> "${COMBINED_ROOT}/${h}" || return $?
+            done            
+        done
+
         if [ -n "${LIPO_PATH}" ]; then
             # Set up variables to get our libraries to lipo
             PLATFORM_DIRS="$(find ${OBJDIR_ROOT} -type d -name "objdir-${PLATFORM}.*" -depth 1)"
             PLATFORM_LIBS="$(find ${PLATFORM_DIRS} -type d -name "lib" -depth 1)"
-            FAT_OUTPUT="${OBJDIR_ROOT}/objdir-${PLATFORM}/lib"
+            FAT_OUTPUT="${COMBINED_ROOT}/lib"
 
             mkdir -p "${FAT_OUTPUT}" || return $?
             for l in $(find ${PLATFORM_LIBS} -type f -name '*.a' -exec basename {} \; | sort -u); do
