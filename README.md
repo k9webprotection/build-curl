@@ -23,6 +23,9 @@ The following are supported to build the OpenSSL and cURL projects:
      
 ##### Steps (using Homebrew) #####
 
+1.  Install Xcode from the Mac App Store
+    * Run Xcode and accept all first-run prompts
+
 2.  Install Homebrew and taps:
     ```
     # Install Homebrew
