@@ -1,8 +1,8 @@
 ## OpenSSL/cURL Building ##
 
-This project provides some prebuilt OpenSSL and cURL configuration scripts for easy building on various platforms.  It contains as submodules, the [openssl-release][openssl] and [curl-release][curl] git projects.
+This project provides some prebuilt OpenSSL and cURL configuration scripts for easy building on various platforms.  It contains as submodules, the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects.
 
-You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [openssl-release][openssl] and [curl-release][curl] git projects.  By default, this project contains submodules of the [openssl-release][openssl] and [curl-release][curl] git projects in the correct locations.
+You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects.  By default, this project contains submodules of the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects in the correct locations.
 
 [openssl-release]: https://github.com/openssl/openssl
 [curl-release]: https://github.com/bagder/curl
