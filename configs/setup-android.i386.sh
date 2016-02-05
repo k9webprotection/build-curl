@@ -6,5 +6,3 @@ GCC_PREFIX="i686-linux-android"
 PLATFORM_ARCH="x86"
 COMP_FLAGS=""
 PLATFORM_DEFINITION="defined(__ANDROID__) && defined(__i386__)"
-
-return 0

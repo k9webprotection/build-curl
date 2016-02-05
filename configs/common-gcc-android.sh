@@ -1,4 +1,5 @@
 #!/bin/bash
+
 PFIX="${ANDROID_NDK_HOME}/toolchains/${GCC_ARCH}-${ANDROID_GCC_VERSION}/prebuilt/darwin-x86_64/bin/${GCC_PREFIX}"
 export SYSROOT="${ANDROID_NDK_HOME}/platforms/android-${ANDROID_PLATFORM}/arch-${PLATFORM_ARCH}"
 export CROSS_SYSROOT="${SYSROOT}"
