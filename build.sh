@@ -15,6 +15,8 @@ DEFAULT_OPENSSL_DIST="${DEFAULT_OPENSSL_DIST:=${BUILD_DIR}/openssl}"
 DEFAULT_CURL_DIST="${DEFAULT_CURL_DIST:=${BUILD_DIR}/curl}"
 OBJDIR_ROOT="${OBJDIR_ROOT:=${BUILD_DIR}/target}"
 CONFIGS_DIR="${CONFIGS_DIR:=${BUILD_DIR}/configs}"
+MAKE_BUILD_PARALLEL="${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}"
+
 
 # Include files which are platform-specific
 OPENSSL_PLATFORM_HEADERS="include/openssl/opensslconf.h"
@@ -102,7 +104,7 @@ do_build_openssl() {
     echo "Building OpenSSL architecture '${TARGET}'..."
     
     # Generate the project and build (and clean up empty cruft directories)
-    make build_apps && make install_sw
+    make -j ${MAKE_BUILD_PARALLEL} build_apps && make install_sw
     ret=$?
     rmdir "${OUTPUT_ROOT}"/{bin,certs,misc,private,lib/engines,lib/pkgconfig} >/dev/null 2>&1
     
@@ -161,7 +163,7 @@ do_build_curl() {
     echo "Building cURL architecture '${TARGET}'..."
     
     # Generate the project and build (and clean up empty cruft directories)
-    make && make install-data install-exec
+    make -j ${MAKE_BUILD_PARALLEL} && make install-data install-exec
     ret=$?
     rmdir "${OUTPUT_ROOT}"/{bin,certs,misc,private,lib/engines,lib/pkgconfig} >/dev/null 2>&1
 
