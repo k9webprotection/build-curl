@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ARCH="x86_64"
+HOST_ARCH="${ARCH}"
+PLATFORM_DEFINITION="defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) && defined(__x86_64__)"

@@ -149,10 +149,9 @@ do_build_curl() {
     if [ ! -f "${BUILD_ROOT}/config.status" ]; then
         echo "Configuring cURL build directory for '${TARGET}'..."
         cd "${BUILD_ROOT}" || return $?
-        ./configure --prefix="${OUTPUT_ROOT}" --host=arm-linux-androideabi \
+        ./configure --prefix="${OUTPUT_ROOT}" --host="${HOST}" ${SSL_FLAG} ${THREAD_FLAG} \
                     --enable-static --disable-shared \
-                    --with-ssl="${OUTPUT_ROOT}" \
-                    --enable-ipv6 || {
+                    --enable-ipv6 --disable-ldap || {
             rm -f "${BUILD_ROOT}/config.status"
             return 1
         }
@@ -195,9 +194,11 @@ do_build() {
         [ -f "${CONFIGS_DIR}/setup-${PLAT}.sh" ] && {
             source "${CONFIGS_DIR}/setup-${PLAT}.sh"    || return $?
         }
-        source "${CONFIG_SETUP}" && source "${GEN_SCRIPT}" && \
-            do_build_openssl ${TARGET} "${OBJDIR_ROOT}/objdir-${TARGET}" && \
-            do_build_curl ${TARGET} "${OBJDIR_ROOT}/objdir-${TARGET}"
+        source "${CONFIG_SETUP}" && source "${GEN_SCRIPT}" || return $?
+        if [ "${SSL_FLAG}" == "--with-ssl=\"${OUTPUT_ROOT}\"" ]; then
+            do_build_openssl ${TARGET} "${OBJDIR_ROOT}/objdir-${TARGET}" || return $?
+        fi
+        do_build_curl ${TARGET} "${OBJDIR_ROOT}/objdir-${TARGET}"
         
         return $?
     elif [ -n "${TARGET}" -a -n "$(list_arch ${TARGET})" ]; then
@@ -223,7 +224,13 @@ do_build() {
         COMBINED_ROOT="${OBJDIR_ROOT}/objdir-${PLATFORM}"
         mkdir -p "${COMBINED_ROOT}" || return $?
         cp -r ${COMBINED_ROOT}.*/include ${COMBINED_ROOT} || return $?
-        for h in ${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}; do
+        if [ "${SSL_FLAG}" == "--with-ssl=\"${OUTPUT_ROOT}\"" ]; then
+            ALL_PLATFORM_HEADERS="${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}"
+        else
+            ALL_PLATFORM_HEADERS="${CURL_PLATFORM_HEADERS}"
+        fi
+        
+        for h in ${ALL_PLATFORM_HEADERS}; do
             echo "Combining header '${h}'..."
             rm ${COMBINED_ROOT}/${h} || return $?
             for a in ${COMBINED_ARCHS}; do
