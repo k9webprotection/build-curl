@@ -21,6 +21,7 @@ MAKE_BUILD_PARALLEL="${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}"
 # Include files which are platform-specific
 OPENSSL_PLATFORM_HEADERS="include/openssl/opensslconf.h"
 CURL_PLATFORM_HEADERS="include/curl/curlbuild.h"
+ALL_PLATFORM_HEADERS="${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}"
 
 list_arch() {
     if [ -z "${1}" ]; then
@@ -46,7 +47,7 @@ print_usage() {
         if [ $# -eq 0 ]; then echo "" >&2; fi
     done
     echo "Usage: ${0} [/path/to/openssl-dist] [/path/to/curl-dist] "                        >&2
-    echo "            <plat.arch|plat|'bootstrap'|'clean'>"                                 >&2
+    echo "            <plat.arch|plat|'combine-headers'|'bootstrap'|'clean'>"               >&2
     echo ""                                                                                 >&2
     echo "\"/path/to/openssl-dist\" is optional and defaults to:"                           >&2
     echo "    \"${DEFAULT_OPENSSL_DIST}\""                                                  >&2
@@ -224,18 +225,15 @@ do_build() {
         COMBINED_ROOT="${OBJDIR_ROOT}/objdir-${PLATFORM}"
         mkdir -p "${COMBINED_ROOT}" || return $?
         cp -r ${COMBINED_ROOT}.*/include ${COMBINED_ROOT} || return $?
-        if [ "${SSL_FLAG}" == "--with-ssl=\"${OUTPUT_ROOT}\"" ]; then
-            ALL_PLATFORM_HEADERS="${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}"
-        else
-            ALL_PLATFORM_HEADERS="${CURL_PLATFORM_HEADERS}"
-        fi
         
         for h in ${ALL_PLATFORM_HEADERS}; do
             echo "Combining header '${h}'..."
-            rm ${COMBINED_ROOT}/${h} || return $?
-            for a in ${COMBINED_ARCHS}; do
-                cat "${OBJDIR_ROOT}/objdir-${a}/${h}" >> "${COMBINED_ROOT}/${h}" || return $?
-            done            
+            if [ -f "${COMBINED_ROOT}/${h}" ]; then
+                rm ${COMBINED_ROOT}/${h} || return $?
+                for a in ${COMBINED_ARCHS}; do
+                    cat "${OBJDIR_ROOT}/objdir-${a}/${h}" >> "${COMBINED_ROOT}/${h}" || return $?
+                done
+            fi
         done
 
         if [ -n "${LIPO_PATH}" ]; then
@@ -250,6 +248,30 @@ do_build() {
                 ${LIPO_PATH} -create $(find ${PLATFORM_LIBS} -type f -name "${l}") -output "${FAT_OUTPUT}/${l}"
             done
         fi
+    elif [ "${TARGET}" == "combine-headers" ]; then
+        COMBINED_ROOT="${OBJDIR_ROOT}/objdir-headers"
+        rm -rf "${COMBINED_ROOT}"
+        mkdir -p "${COMBINED_ROOT}" || return $?
+        COMBINED_PLATS="$(list_plats)"
+        for p in ${COMBINED_PLATS}; do
+            if [ -d "${OBJDIR_ROOT}/objdir-${p}/include" ]; then
+                cp -r "${OBJDIR_ROOT}/objdir-${p}/include" ${COMBINED_ROOT} || return $?
+            else
+                echo "Platform ${p} has not been built"
+                return 1
+            fi
+        done
+        for h in ${OPENSSL_PLATFORM_HEADERS} ${CURL_PLATFORM_HEADERS}; do
+            echo "Combining header '${h}'..."
+            if [ -f "${COMBINED_ROOT}/${h}" ]; then
+                rm ${COMBINED_ROOT}/${h} || return $?
+                for p in ${COMBINED_PLATS}; do
+                    if [ -f "${OBJDIR_ROOT}/objdir-${p}/${h}" ]; then
+                        cat "${OBJDIR_ROOT}/objdir-${p}/${h}" >> "${COMBINED_ROOT}/${h}" || return $?
+                    fi
+                done
+            fi
+        done    
     else
         print_usage "Missing/invalid target '${TARGET}'"
     fi
