@@ -20,7 +20,7 @@ MAKE_BUILD_PARALLEL="${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}"
 
 # Include files which are platform-specific
 OPENSSL_PLATFORM_HEADERS="include/openssl/opensslconf.h"
-CURL_PLATFORM_HEADERS=""
+CURL_PLATFORM_HEADERS="include/curl/curlbuild.h"
 
 list_arch() {
     if [ -z "${1}" ]; then
