@@ -65,7 +65,7 @@ The `build.sh` script accepts a "bootstrap" argument which will run the Homebrew
 
 ### Build Steps ###
 
-Before building you will want to link and overwrite "autoconf", you do this by running `brew link --overwrite  autoconf`
+If you installed `autoconf` from homebrew, it may conflict with the `autoconf213` package and not be linked. If this has happened, you will want to run `brew link --overwrite  autoconf`
 
 You can build the libraries using the `build.sh` script:
 
