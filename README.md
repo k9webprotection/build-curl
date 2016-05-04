@@ -65,6 +65,8 @@ The `build.sh` script accepts a "bootstrap" argument which will run the Homebrew
 
 ### Build Steps ###
 
+If you installed `autoconf` from homebrew, it may conflict with the `autoconf213` package and not be linked. If this has happened, you will want to run `brew link --overwrite  autoconf`
+
 You can build the libraries using the `build.sh` script:
 
     ./build.sh [/path/to/openssl-dist] [/path/to/curl-dist] <plat.arch|plat|'bootstrap'|'clean'>
