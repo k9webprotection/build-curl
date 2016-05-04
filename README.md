@@ -65,6 +65,8 @@ The `build.sh` script accepts a "bootstrap" argument which will run the Homebrew
 
 ### Build Steps ###
 
+Before building you will want to link and overwrite "autoconf", you do this by running `brew link --overwrite  autoconf`
+
 You can build the libraries using the `build.sh` script:
 
     ./build.sh [/path/to/openssl-dist] [/path/to/curl-dist] <plat.arch|plat|'bootstrap'|'clean'>
