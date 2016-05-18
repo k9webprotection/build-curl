@@ -5,17 +5,17 @@ BUILD_DIR="$(pwd)"
 cd ->/dev/null
 
 # Homebrew bootstrapping information
-HB_BOOTSTRAP_GIST_URL="${HB_BOOTSTRAP_GIST_URL:=https://gist.githubusercontent.com/toonetown/48101686e509fda81335/raw/fbb7797450a3314dcf54d24dbef223988b23e35f/homebrew-bootstrap.sh}"
+: ${HB_BOOTSTRAP_GIST_URL:="https://gist.githubusercontent.com/toonetown/48101686e509fda81335/raw/e848deeed4007b7efd87435d048de3031d40f934/homebrew-bootstrap.sh"}
 HB_BOOTSTRAP="t:*toonetown/android b:android-ndk 
               b:autoconf b:automake b:libtool
               t:toonetown/extras b:toonetown-extras s:toonetown-extras b:android-env"
 
 # Overridable build locations
-DEFAULT_OPENSSL_DIST="${DEFAULT_OPENSSL_DIST:=${BUILD_DIR}/openssl}"
-DEFAULT_CURL_DIST="${DEFAULT_CURL_DIST:=${BUILD_DIR}/curl}"
-OBJDIR_ROOT="${OBJDIR_ROOT:=${BUILD_DIR}/target}"
-CONFIGS_DIR="${CONFIGS_DIR:=${BUILD_DIR}/configs}"
-MAKE_BUILD_PARALLEL="${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}"
+: ${DEFAULT_OPENSSL_DIST:="${BUILD_DIR}/openssl"}
+: ${DEFAULT_CURL_DIST:="${BUILD_DIR}/curl"}
+: ${OBJDIR_ROOT:="${BUILD_DIR}/target"}
+: ${CONFIGS_DIR:="${BUILD_DIR}/configs"}
+: ${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}
 
 
 # Include files which are platform-specific
