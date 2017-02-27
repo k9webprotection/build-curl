@@ -16,11 +16,13 @@ export CPP="${PFIX}-cpp"
 export CXX="${PFIX}-g++"
 export LD="${PFIX}-ld"
 export STRIP="${PFIX}-strip"
+export CFLAGS="--sysroot=${CROSS_SYSROOT} ${COMP_FLAGS}"
 export CPPFLAGS="--sysroot=${CROSS_SYSROOT} ${COMP_FLAGS}"
 export LDFLAGS="--sysroot=${CROSS_SYSROOT}"
 
 ANDROID_BUILD_PIE="${ANDROID_BUILD_PIE:-true}"
 if [ "${ANDROID_BUILD_PIE}" == "true" ]; then
+    export CFLAGS="${CFLAGS} -fPIE"
     export CPPFLAGS="${CPPFLAGS} -fPIE"
     export LDFLAGS="${LDFLAGS} -fPIE -pie"
 fi
