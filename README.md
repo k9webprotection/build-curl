@@ -11,9 +11,9 @@ You can check this directory out in any location on your computer, but the defau
 
 The following are supported to build the OpenSSL and cURL projects:
 
- * OS X 10.11 (El Capitan)
+ * macOS 10.12 (Sierra)
  
- * Android NDK r10e
+ * Android NDK r15b
      * You must set the environment variable `ANDROID_NDK_HOME` to point to your NDK installation
 
  * Build dependencies
