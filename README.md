@@ -1,64 +1,38 @@
-## OpenSSL/cURL Building ##
+## cURL Building ##
 
-This project provides some prebuilt OpenSSL and cURL configuration scripts for easy building on various platforms.  It contains as submodules, the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects.
+This project provides some prebuilt cURL configuration scripts for easy building on various platforms.  It contains as a submodule, [k9webprotection/curl][curl-release] git project.
 
-You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects.  By default, this project contains submodules of the [k9webprotection/openssl][openssl-release] and [k9webprotection/curl][curl-release] git projects in the correct locations.
+You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [k9webprotection/curl][curl-release] git project.  By default, this project contains a submodule of the [k9webprotection/curl][curl-release] git project in the correct location.
 
-[openssl-release]: https://github.com/openssl/openssl
 [curl-release]: https://github.com/bagder/curl
 
 ### Requirements ###
 
-The following are supported to build the OpenSSL and cURL projects:
+The following are supported to build the cURL project:
+
+To build on macOS:
 
  * macOS 10.12 (Sierra)
  
- * Android NDK r15b
-     * You must set the environment variable `ANDROID_NDK_HOME` to point to your NDK installation
+ * Xcode 8.3 (From Mac App Store)
+     * Run Xcode and accept all first-run prompts
 
  * Build dependencies
      * Autoconf
      * Automake
      * Libtool
+
+To build for Android:
+
+ * macOS requirements above
+ 
+ * Android NDK r15b
+     * You must set the environment variable `ANDROID_NDK_HOME` to point to your NDK installation
+
      
-##### Steps (using Homebrew) #####
+##### Steps (Bootstrap script) #####
 
-1.  Install Xcode from the Mac App Store
-    * Run Xcode and accept all first-run prompts
-
-2.  Install Homebrew and taps:
-    ```
-    # Install Homebrew
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    
-    # Services for starting environment watcher
-    brew tap homebrew/services
-    
-    # Extras for environment watching
-    brew tap toonetown/extras
-    brew install toonetown-extras
-    brew services start toonetown-extras
-
-    # Android (and pinned) for for android packages
-    brew tap toonetown/android
-    brew tap-pin toonetown/android
-    ```
-    
-3.  Install required packages:
-    ```
-    # Install android NDK (and environment)
-    brew install android-ndk
-    brew install android-env
-    
-    # Install build dependencies
-    brew install autoconf automake libtool
-    ```
-
-4.  Reboot (or open a new terminal window) to get your new environments
-
-##### Shortcut Steps (Bootstrap script) #####
-
-The `build.sh` script accepts a "bootstrap" argument which will run the Homebrew steps above (except for #1 and #4).  It can be run multiple times safely.
+The `build.sh` script accepts a "bootstrap" argument which will install the dependencies for building from Homebrew.  It can be run multiple times safely.
 
     ./build.sh bootstrap
 
@@ -69,8 +43,17 @@ If you installed `autoconf` from homebrew, it may conflict with the `autoconf213
 
 You can build the libraries using the `build.sh` script:
 
-    ./build.sh [/path/to/openssl-dist] [/path/to/curl-dist] <plat.arch|plat|'bootstrap'|'clean'>
+    ./build.sh [/path/to/curl-dist] <plat.arch|plat|'bootstrap'|'clean'>
 
 Run `./build.sh` itself to see details on its options.
 
 You can modify the execution of the scripts by setting various environment variables.  See the script sources for lists of these variables.
+
+
+### Linking with OpenSSL ###
+
+You can link the output of the libraries with OpenSSL that has been built using the [k9webprotection/build-openssl][build-openssl] project.  To do this, set the `OPENSSL_TARGET` environment variable to point to the directory to the output (or unzipped distribution) of the build-openssl project before running `build.sh`
+
+By default iOS and macOS will link using the `--with-darwinssl` flag.  By default Android will fail to compile unless `OPENSSL_TARGET` is set.
+
+Setting `OPENSSL_TARGET` explicitly to "none" will disable SSL support in cURL.

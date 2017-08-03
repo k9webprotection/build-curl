@@ -2,8 +2,8 @@
 
 PFIX="${ANDROID_NDK_HOME}/toolchains/${GCC_ARCH}-${ANDROID_GCC_VERSION}/prebuilt/darwin-x86_64/bin/${GCC_PREFIX}"
 HOST="arm-linux-androideabi"
-SSL_FLAG="--with-ssl=\"${OUTPUT_ROOT}\""
 THREAD_FLAG="--enable-threaded-resolver"
+[ -n "${OPENSSL_TARGET}" ] || { echo "Building for android requires OPENSSL_TARGET to be set"; exit 1; }
 
 export SYSROOT="${ANDROID_NDK_HOME}/platforms/android-${ANDROID_PLATFORM}/arch-${PLATFORM_ARCH}"
 export CROSS_SYSROOT="${SYSROOT}"
