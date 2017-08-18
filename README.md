@@ -57,3 +57,8 @@ You can link the output of the libraries with OpenSSL that has been built using 
 By default iOS and macOS will link using the `--with-darwinssl` flag.  By default Android will fail to compile unless `OPENSSL_TARGET` is set.
 
 Setting `OPENSSL_TARGET` explicitly to "none" will disable SSL support in cURL.
+
+
+### TODO: Windows ###
+
+These scripts don't build the windows binaries yet - that still needs to be implemented.  We can look at https://github.com/blackrosezy/build-libcurl-windows/blob/master/build.bat as a starting point for doing that.
