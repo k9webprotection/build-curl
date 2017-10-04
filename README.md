@@ -58,6 +58,7 @@ By default iOS and macOS will link using the `--with-darwinssl` flag.  By defaul
 
 Setting `OPENSSL_TARGET` explicitly to "none" will disable SSL support in cURL.
 
+[build-openssl]: https://github.com/k9webprotection/build-openssl
 
 ### TODO: Windows ###
 
