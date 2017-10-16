@@ -366,16 +366,16 @@ fi
 TARGET="${1}"; shift
 case "${TARGET}" in
     "clean")
-        do_clean $@
+        do_clean "$@"
         ;;
     "copy-windows")
-        do_copy_windows $@
+        do_copy_windows "$@"
         ;;
     "package")
-        do_package $@
+        do_package "$@"
         ;;
     *)
-        do_build ${TARGET} $@
+        do_build ${TARGET} "$@"
         ;;
 esac
 exit $?
