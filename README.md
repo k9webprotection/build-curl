@@ -12,9 +12,9 @@ The following are supported to build the cURL project:
 
 To build on macOS:
 
- * macOS 10.12 (Sierra)
+ * macOS 10.13 (High Sierra)
  
- * Xcode 8.3 (From Mac App Store)
+ * Xcode 9.1 (From Mac App Store)
      * Run Xcode and accept all first-run prompts
 
  * Build dependencies
@@ -26,7 +26,7 @@ To build for Android:
 
  * macOS requirements above
  
- * Android NDK r15b
+ * Android NDK r15c
      * You must set the environment variable `ANDROID_NDK_HOME` to point to your NDK installation
 
      
