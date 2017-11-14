@@ -35,7 +35,7 @@ HB_BOOTSTRAP="t:*toonetown/android b:android-ndk
                          --disable-unix-sockets"}
 
 # Include files which are platform-specific
-PLATFORM_SPECIFIC_HEADERS="curl/curlbuild.h"
+PLATFORM_SPECIFIC_HEADERS=""
 
 BUILD_PLATFORM=""
 [ -n "${OPENSSL_TARGET}" ] && {
