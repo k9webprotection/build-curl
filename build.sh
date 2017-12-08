@@ -123,9 +123,7 @@ do_build_curl() {
             echo "OpenSSL in ${OPENSSL_TARGET} is not built for ${TARGET}"
             exit 1
         }
-        SSL_FLAG="--with-ssl ${SSL_FLAG}"
-        export CPPFLAGS="${CPPFLAGS} -I${_OSSL_TGT}/include"
-        export LDFLAGS="${LDFLAGS} -L${_OSSL_TGT}/lib"
+        SSL_FLAG="--with-ssl=${_OSSL_TGT} ${SSL_FLAG}"
     }
     
     [ -d "${BUILD_ROOT}" -a -f "${BUILD_ROOT}/configure.ac" -a \
@@ -142,6 +140,10 @@ do_build_curl() {
     if [ ! -f "${BUILD_ROOT}/config.status" ]; then
         echo "Configuring cURL build directory for '${TARGET}'..."
         cd "${BUILD_ROOT}" || return $?
+        [ -n "${CURL_PRECONFIGURE}" ] && {
+            [ -x "${CURL_PRECONFIGURE}" ] || { echo "${CURL_PRECONFIGURE} does not exist"; return 1; }
+            source "${CURL_PRECONFIGURE}" || return $?
+        }
         ./configure --host="${HOST}" \
                     ${COMMON_CURL_BUILD_OPTIONS} \
                     ${CURL_BUILD_OPTIONS} \
