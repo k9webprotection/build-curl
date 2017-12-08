@@ -333,7 +333,7 @@ do_package() {
     BASE="curl-$(cat "${PATH_TO_CURL_DIST}/include/curl/curlver.h" | \
                  sed -nE 's/^#define LIBCURL_VERSION "([0-9]+\.[0-9]+\.[0-9]+)(-.*)?"/\1/p')"
     cp -r "${OBJDIR_ROOT}" "${BASE}" || exit $?
-    rm -rf "${BASE}/"*"/build" || exit $?
+    rm -rf "${BASE}/"*"/build" "${BASE}/logs" || exit $?
     find "${BASE}" -name .DS_Store -exec rm {} \; || exit $?
     tar -zcvpf "${1}/${BASE}.tar.gz" "${BASE}" || exit $?
     rm -rf "${BASE}"
