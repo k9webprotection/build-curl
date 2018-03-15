@@ -1,8 +1,8 @@
 ## cURL Building ##
 
-This project provides some prebuilt cURL configuration scripts for easy building on various platforms.  It contains as a submodule, [k9webprotection/curl][curl-release] git project.
+This project provides some prebuilt cURL configuration scripts for easy building on various platforms.  It contains as a submodule, [toonetown/curl][curl-release] git project.
 
-You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [k9webprotection/curl][curl-release] git project.  By default, this project contains a submodule of the [k9webprotection/curl][curl-release] git project in the correct location.
+You can check this directory out in any location on your computer, but the default location that the `build.sh` script looks for is as a parent directory to where you check out the [toonetown/curl][curl-release] git project.  By default, this project contains a submodule of the [toonetown/curl][curl-release] git project in the correct location.
 
 [curl-release]: https://github.com/bagder/curl
 
@@ -52,13 +52,13 @@ You can modify the execution of the scripts by setting various environment varia
 
 ### Linking with OpenSSL ###
 
-You can link the output of the libraries with OpenSSL that has been built using the [k9webprotection/build-openssl][build-openssl] project.  To do this, set the `OPENSSL_TARGET` environment variable to point to the directory to the output (or unzipped distribution) of the build-openssl project before running `build.sh`
+You can link the output of the libraries with OpenSSL that has been built using the [toonetown/build-openssl][build-openssl] project.  To do this, set the `OPENSSL_TARGET` environment variable to point to the directory to the output (or unzipped distribution) of the build-openssl project before running `build.sh`
 
 By default iOS and macOS will link using the `--with-darwinssl` flag.  By default Android will fail to compile unless `OPENSSL_TARGET` is set.
 
 Setting `OPENSSL_TARGET` explicitly to "none" will disable SSL support in cURL.
 
-[build-openssl]: https://github.com/k9webprotection/build-openssl
+[build-openssl]: https://github.com/toonetown/build-openssl
 
 ### TODO: Windows ###
 
