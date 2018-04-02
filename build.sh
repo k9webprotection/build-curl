@@ -292,7 +292,7 @@ do_combine_headers() {
     mkdir -p "${COMBINED_HEADERS}" || return $?
     COMBINED_PLATS="$(list_plats)"
     for p in ${COMBINED_PLATS}; do
-        if [ "${p}" == "android" ]; then
+        if [ "${p}" == "android" -o "${p}" == "ios" ]; then
             p="$(find "${OBJDIR_ROOT}" -type d -depth 1 -name "objdir-openssl_*-${p}" -exec basename {} \; | \
                  sort -nr | head -n1 | sed -e 's/^objdir-//g')"
         fi
@@ -309,7 +309,7 @@ do_combine_headers() {
         if [ -f "${COMBINED_HEADERS}/${h}" ]; then
             rm "${COMBINED_HEADERS}/${h}" || return $?
             for p in ${COMBINED_PLATS}; do
-                if [ "${p}" == "android" ]; then
+                if [ "${p}" == "android" -o "${p}" == "ios" ]; then
                     p="$(find "${OBJDIR_ROOT}" -type d -depth 1 -name "objdir-openssl_*-${p}" -exec basename {} \; | \
                          sort -nr | head -n1 | sed -e 's/^objdir-//g')"
                 fi
