@@ -22,7 +22,7 @@ HB_BOOTSTRAP="t:*toonetown/android b:android-ndk
                          --disable-ldaps        \
                          --disable-rtsp         \
                          --disable-dict         \
-	                     --disable-telnet       \
+                         --disable-telnet       \
                          --disable-tftp         \
                          --disable-pop3         \
                          --disable-imap         \
@@ -32,7 +32,8 @@ HB_BOOTSTRAP="t:*toonetown/android b:android-ndk
                          --disable-sspi         \
                          --disable-ntlm-wb      \
                          --disable-crypto-auth  \
-                         --disable-unix-sockets"}
+                         --disable-unix-sockets \
+                         --without-libidn2"}
 
 # Include files which are platform-specific
 PLATFORM_SPECIFIC_HEADERS=""
