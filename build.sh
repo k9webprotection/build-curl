@@ -16,6 +16,9 @@ HB_BOOTSTRAP="t:*toonetown/android b:android-ndk
 : ${CONFIGS_DIR:="${BUILD_DIR}/configs"}
 : ${MAKE_BUILD_PARALLEL:=$(sysctl -n hw.ncpu)}
 
+# Packages to bundle
+: ${PKG_COMBINED_PLATS:="macosx"}
+
 # Options for cURL - default ones are very secure (most stuff disabled)
 : ${COMMON_CURL_BUILD_OPTIONS:="--disable-dependency-tracking --enable-static --disable-shared"}
 : ${CURL_BUILD_OPTIONS:="--disable-ldap         \
@@ -291,7 +294,10 @@ do_combine_headers() {
     COMBINED_HEADERS="${OBJDIR_ROOT}/include"
     rm -rf "${COMBINED_HEADERS}"
     mkdir -p "${COMBINED_HEADERS}" || return $?
-    COMBINED_PLATS="$(list_plats)"
+    COMBINED_PLATS="${PKG_COMBINED_PLATS}"
+    [ -n "${COMBINED_PLATS}" ] || {
+        COMBINED_PLATS="$(list_plats)"
+    }
     for p in ${COMBINED_PLATS}; do
         if [ "${p}" == "android" -o "${p}" == "ios" ]; then
             p="$(find "${OBJDIR_ROOT}" -type d -depth 1 -name "objdir-openssl_*-${p}" -exec basename {} \; | \
