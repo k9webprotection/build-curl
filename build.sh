@@ -123,6 +123,11 @@ do_build_curl() {
     [ "${OPENSSL_TARGET}" == "none" ] && { SSL_FLAG="--without-ssl ${SSL_FLAG}"; }
     [ -d "${OPENSSL_TARGET}" ] && {
         _OSSL_TGT="${OPENSSL_TARGET}/objdir-${TARGET}"
+        [ -d "${_OSSL_TGT}" ] || {
+            echo "${TARGET}" | grep -q '\.' && {
+                _OSSL_TGT="${OPENSSL_TARGET}/objdir-$(echo "${TARGET}" | cut -d'.' -f1)"
+            }
+        }
         [ -d "${_OSSL_TGT}" -a -d "${_OSSL_TGT}/lib" -a -d "${_OSSL_TGT}/include" ] || {
             echo "OpenSSL in ${OPENSSL_TARGET} is not built for ${TARGET}"
             exit 1
@@ -343,6 +348,7 @@ do_package() {
                  sed -nE 's/^#define LIBCURL_VERSION "([0-9]+\.[0-9]+\.[0-9]+)(-.*)?"/\1/p')"
     cp -r "${OBJDIR_ROOT}" "${BASE}" || exit $?
     rm -rf "${BASE}/"*"/build" "${BASE}/logs" || exit $?
+    rm -rf "${BASE}/objdir"*"-macosx.x86_64" || return $?
     find "${BASE}" -name .DS_Store -exec rm {} \; || exit $?
     tar -zcvpf "${1}/${BASE}.tar.gz" "${BASE}" || exit $?
     rm -rf "${BASE}"
